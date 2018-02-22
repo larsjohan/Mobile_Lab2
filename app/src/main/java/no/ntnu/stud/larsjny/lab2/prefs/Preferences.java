@@ -1,7 +1,9 @@
 package no.ntnu.stud.larsjny.lab2.prefs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.view.MenuItem;
 
 import no.ntnu.stud.larsjny.lab2.R;
 
@@ -16,4 +18,8 @@ public class Preferences extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
     }
+
+
+
+
 }

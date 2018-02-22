@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">Lab2</string>
-    <string name="title_activity_preferences">Settings</string>
+    <string name="app_name">Simple RSS Reader</string>
 
     <!-- Strings related to Settings -->
+
+    <string name="pref_title">Settings</string>
 
     <!-- URL -->
     <string name="urlTitle">URL</string>
