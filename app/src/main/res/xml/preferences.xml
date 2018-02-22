@@ -1,0 +1,35 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="RSS"
+        android:key="pref.rss">
+
+        <EditTextPreference
+            android:icon="@drawable/ic_notifications_black_24dp"
+            android:key="rssurl"
+            android:summary="URL to a valid RSS2.0 or ATOM feed"
+            android:title="URL" />
+
+        <ListPreference
+            android:defaultValue="@integer/frequencyDefault"
+            android:entries="@array/frequency"
+            android:entryValues="@array/frequencyValues"
+            android:icon="@drawable/ic_sync_black_24dp"
+            android:key="frequency"
+            android:summary="@string/frequencySummary"
+            android:title="@string/frequencyTitle"
+            android:dependency="rssurl"/>
+
+        <ListPreference
+            android:defaultValue="@integer/itemsDefault"
+            android:entries="@array/items"
+            android:entryValues="@array/items"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:key="feedSize"
+            android:summary="@string/itemsSummary"
+            android:title="@string/itemsTitle"
+            android:dependency="rssurl"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
