@@ -1,17 +1,18 @@
 package no.ntnu.stud.larsjny.lab2;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import no.ntnu.stud.larsjny.lab2.prefs.Preferences;
+import no.ntnu.stud.larsjny.lab2.prefs.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Load Settings fragment
         getFragmentManager().beginTransaction()
-                .add(new Preferences(), "Preferences")
+                .replace(android.R.id.content, new SettingsFragment())
                 .commit();
     }
 }

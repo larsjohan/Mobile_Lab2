@@ -13,31 +13,32 @@
     <string name="frequencyTitle">Update Frequency</string>
     <string name="frequencySummary">How often the Feed should be updated</string>
 
-    <array name="frequency">
+    <string-array name="frequency">
         <item>10 min</item>
         <item>60 min</item>
         <item>24 hours</item>
-    </array>
+    </string-array>
 
-    <array name="frequencyValues">
+    <string-array name="frequencyValues">
         <item>600</item>
         <item>3600</item>
         <item>86400</item>
-    </array>
+    </string-array>
 
-    <integer name="frequencyDefault">600</integer>
+    <string name="frequencyDefault">600</string>
 
     <!-- Number of items to display -->
     <string name="itemsTitle">Feed Size</string>
     <string name="itemsSummary">Number of feed-items to load</string>
 
-    <array name="items">
+    <string-array name="items">
         <item>10</item>
         <item>20</item>
         <item>50</item>
         <item>100</item>
-    </array>
+    </string-array>
 
-    <integer name="itemsDefault">10</integer>
+    <string name="itemsDefault">10</string>
+    <string name="LogTag">Lab2</string>
 
 </resources>
