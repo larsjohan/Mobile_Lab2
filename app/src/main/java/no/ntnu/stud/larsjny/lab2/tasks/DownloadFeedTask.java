@@ -3,23 +3,31 @@ package no.ntnu.stud.larsjny.lab2.tasks;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.rometools.rome.feed.synd.SyndContent;
+import com.rometools.rome.feed.synd.SyndEnclosure;
+import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import no.ntnu.stud.larsjny.lab2.Article;
 import no.ntnu.stud.larsjny.lab2.ListActivity;
@@ -36,10 +44,13 @@ public class DownloadFeedTask extends AsyncTask<String, Integer, Long> {
 
     private ArrayList<Article> articles;
 
-    public DownloadFeedTask(Activity activity){
+    private int limit;
+
+    public DownloadFeedTask(Activity activity, int limit){
         super();
         this.activity = activity;
         this.articles = new ArrayList<>();
+        this.limit = limit;
     }
 
     @Override
@@ -62,17 +73,27 @@ public class DownloadFeedTask extends AsyncTask<String, Integer, Long> {
 
             SyndFeed feed = getFeed(urls[0]);
 
-            feed.getEntries().forEach((entry) -> {
-                String title = entry.getTitle();
-                String imgUrl = entry.getUri();
-                String summary = entry.getDescription().getValue();
-                String content = entry.getSource().getDescription();
+            List<SyndEntry> entries = feed.getEntries();
 
+            for (int i = 0; i < this.limit; i++){
+                SyndEnclosure image = null;
 
+                for(SyndEnclosure enclosure : entries.get(i).getEnclosures()){
+                    String type = enclosure.getType();
 
-                this.articles.add(new Article(imgUrl, title, summary, content));
-            });
+                    if (type.equals("image/jpeg") || type.equals("image/jpg")){
+                        image = enclosure;
+                        break;
+                    }
+                }
 
+                String imgUrl = (null != image) ? image.getUrl() : null;
+                String title = entries.get(i).getTitle();
+                String summary = entries.get(i).getDescription().getValue();
+                String content = entries.get(i).getSource().getDescription();
+
+                this.articles.add(new Article(this.activity, imgUrl, title, summary, content));
+            }
 
         } catch (FeedException e) {
             Log.d(this.activity.getString(R.string.LogTag), "Invalid Feed: " + e.getMessage());

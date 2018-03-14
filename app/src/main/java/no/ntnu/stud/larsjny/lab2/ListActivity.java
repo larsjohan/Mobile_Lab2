@@ -71,7 +71,7 @@ public class ListActivity extends AppCompatActivity {
         String rssurl = PreferenceManager.getDefaultSharedPreferences(this).getString("rssurl", "");
 
 
-        DownloadFeedTask downloader = new DownloadFeedTask(this);
+        DownloadFeedTask downloader = new DownloadFeedTask(this, this.feedSize);
 
         downloader.execute(rssurl);
 
@@ -130,6 +130,10 @@ public class ListActivity extends AppCompatActivity {
         this.articles.clear();
         this.articles.addAll(articles);
         this.adapter.notifyDataSetChanged();
+    }
+
+    public RssListAdapter getAdapter() {
+        return this.adapter;
     }
 
 }
