@@ -1,4 +1,8 @@
+## NOTE! This code has been developed on a physical device running API 24, and is not tested with the Android emulator.
+
 # Lab 02: Simple RSS reader
+
+
 ## The idea
 Create an application that allows the user to read content from any RSS feed. The app will consist of 3 activities: one with the list of items (ListView, for selecting content), one for article content display (for reading content), and User Preferences (for user to specify the preferences).
 
