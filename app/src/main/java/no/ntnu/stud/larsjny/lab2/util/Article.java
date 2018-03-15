@@ -1,22 +1,23 @@
 package no.ntnu.stud.larsjny.lab2.util;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
+import android.widget.NumberPicker;
 
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import no.ntnu.stud.larsjny.lab2.tasks.DownloadImageTask;
 
 /**
- * Created by Lars Johan on 13.03.2018.
+ * One item in a feed
  */
 
 public class Article implements Serializable{
 
-    private Activity activity;
+    private RssListAdapter adapter;
 
     private String imgUrl;
 
@@ -32,32 +33,34 @@ public class Article implements Serializable{
 
     private Bitmap image;
 
-    public Article(Activity activity,
+    public Article(RssListAdapter adapter,
                    String imgUrl,
                    String title,
                    String summary,
                    String content,
                    Date date,
                    String author) {
-        this.activity = activity;
+
+        this.adapter = adapter;
         this.imgUrl = imgUrl;
         this.title = title;
         this.summary = summary;
         this.content = content;
+
         try {
             this.date = new SimpleDateFormat("dd.MM.yyyy - HH:mm").parse(date.toString()).toString();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (NullPointerException npe){
+        } catch (ParseException | NullPointerException e) {
             this.date = "";
         }
+
         this.author = author;
         downloadImage();
+
     }
 
     private void downloadImage() {
         if (this.imgUrl != null) {
-            DownloadImageTask downloader = new DownloadImageTask(this.activity, this);
+            DownloadImageTask downloader = new DownloadImageTask(this);
             downloader.execute(this.imgUrl);
         }
     }
@@ -116,5 +119,13 @@ public class Article implements Serializable{
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public RssListAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(RssListAdapter adapter) {
+        this.adapter = adapter;
     }
 }

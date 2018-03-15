@@ -1,6 +1,5 @@
 package no.ntnu.stud.larsjny.lab2.tasks;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -13,21 +12,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import no.ntnu.stud.larsjny.lab2.util.Article;
-import no.ntnu.stud.larsjny.lab2.ListActivity;
 
 /**
  * Downloads the RSS-image in the backound
  */
 public class DownloadImageTask extends AsyncTask<String, Integer, Bitmap> {
 
-    private Activity activity;
-
     private Article article;
 
 
 
-    public DownloadImageTask(Activity activity, Article article) {
-        this.activity = activity;
+    public DownloadImageTask(Article article) {
         this.article = article;
     }
 
@@ -46,15 +41,14 @@ public class DownloadImageTask extends AsyncTask<String, Integer, Bitmap> {
             return bitmapImage;
 
         } catch (IOException e) {
-            Log.d("Lab2", "Unable to downlad Image for article: " + this.article.getTitle());
             return null;
         }
 
     }
 
     @Override
-    protected void onPostExecute(Bitmap image) {
-        this.article.setImage(image);
-        ((ListActivity) this.activity).getAdapter().notifyDataSetChanged();
+    protected void onPostExecute(Bitmap bitmap) {
+        this.article.setImage(bitmap);
+        this.article.getAdapter().notifyDataSetChanged();
     }
 }

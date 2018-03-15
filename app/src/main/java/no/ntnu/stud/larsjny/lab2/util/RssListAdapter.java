@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import no.ntnu.stud.larsjny.lab2.R;
@@ -55,4 +56,14 @@ public class RssListAdapter extends ArrayAdapter<Article> {
 
         return view;
     }
+
+    @Override
+    public void addAll(@NonNull Collection<? extends Article> collection) {
+        super.clear();
+        super.addAll(collection);
+        this.articles.clear();
+        this.articles.addAll(collection);
+    }
+
+
 }

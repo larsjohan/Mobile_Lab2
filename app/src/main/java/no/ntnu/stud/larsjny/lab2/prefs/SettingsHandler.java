@@ -24,6 +24,6 @@ public class SettingsHandler implements SharedPreferences.OnSharedPreferenceChan
 
         Log.d(this.activity.getString(R.string.LogTag), "Preference changed: " + key);
 
-        ((ListActivity) this.activity).update();
+        ((ListActivity) this.activity).updateMembersFromPreferences();
     }
 }

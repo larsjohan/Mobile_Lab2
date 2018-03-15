@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -15,17 +16,20 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import no.ntnu.stud.larsjny.lab2.prefs.SettingsActivity;
 import no.ntnu.stud.larsjny.lab2.prefs.SettingsHandler;
 import no.ntnu.stud.larsjny.lab2.tasks.DownloadFeedTask;
 import no.ntnu.stud.larsjny.lab2.util.Article;
+import no.ntnu.stud.larsjny.lab2.util.Callback;
 import no.ntnu.stud.larsjny.lab2.util.RssListAdapter;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements Callback {
 
     private ListView list;
-
 
     private RssListAdapter adapter;
     private ArrayList<Article> articles;
@@ -43,15 +47,30 @@ public class ListActivity extends AppCompatActivity {
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(new SettingsHandler(this));
 
+
+
         this.articles = new ArrayList<>();
 
         this.list = findViewById(R.id.list);
-        this.adapter = new RssListAdapter(this,0, this.articles);
+        this.adapter = new RssListAdapter( this,0, this.articles);
 
         this.list.setAdapter(this.adapter);
 
         this.list.setOnItemClickListener(this::displayContent);
+
+
+
+
+        updateMembersFromPreferences();
+
+        Log.d(getString(R.string.LogTag), "Scheduling update every " + this.frequency + " seconds");
+
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.scheduleAtFixedRate(this::updateFeed, this.frequency, this.frequency, TimeUnit.SECONDS);
+
         updateFeed();
+
     }
 
 
@@ -81,13 +100,13 @@ public class ListActivity extends AppCompatActivity {
     }
 
     /**
-     * Download a new feed and update list
+     * Download a new feed and updateMembersFromPreferences list
      */
     private void fetchSource() {
 
         String rssurl = PreferenceManager.getDefaultSharedPreferences(this).getString("rssurl", "");
 
-        DownloadFeedTask downloader = new DownloadFeedTask(this, this.feedSize);
+        DownloadFeedTask downloader = new DownloadFeedTask(this, this.adapter, this.feedSize);
 
         downloader.execute(rssurl);
 
@@ -125,6 +144,7 @@ public class ListActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.action_update) {
             updateFeed();
+            return true;
         }
 
         return false;
@@ -134,7 +154,7 @@ public class ListActivity extends AppCompatActivity {
     /**
      * Called when preferences change
      */
-    public void update() {
+    public void updateMembersFromPreferences() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         this.url = pref.getString("rssurl", "");
@@ -153,20 +173,25 @@ public class ListActivity extends AppCompatActivity {
     }
 
     /**
-     * Get a hook to the adapter so that the list can be updated
-     * @return
-     */
-    public RssListAdapter getAdapter() {
-        return this.adapter;
-    }
-
-    /**
      * Loads the newest articles from the specified RSS-URL
      */
     public void updateFeed(){
-        update();                           // Fetch parameters from Prefs
+        Log.d(getString(R.string.LogTag), "UPDATING FEED");
+
+        ConstraintLayout progress = findViewById(R.id.progressView);
+        progress.setVisibility(View.VISIBLE);
+
+
+        updateMembersFromPreferences();                           // Fetch parameters from Prefs
         this.articles.clear();              // Clear the loaded articles
-        fetchSource();                      // Fetch the new feed and update list
+        fetchSource();                      // Fetch the new feed and updateMembersFromPreferences list
     }
 
+    /**
+     * Run when the DownloadFeedTask is done
+     */
+    @Override
+    public void doCallback() {
+        findViewById(R.id.progressView).setVisibility(View.GONE);
+    }
 }

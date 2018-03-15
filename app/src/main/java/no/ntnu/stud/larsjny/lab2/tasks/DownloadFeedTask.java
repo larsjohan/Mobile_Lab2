@@ -1,9 +1,6 @@
 package no.ntnu.stud.larsjny.lab2.tasks;
 
-import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.view.View;
 
 import com.rometools.rome.feed.synd.SyndEnclosure;
 import com.rometools.rome.feed.synd.SyndEntry;
@@ -17,51 +14,45 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import no.ntnu.stud.larsjny.lab2.util.Article;
-import no.ntnu.stud.larsjny.lab2.ListActivity;
-import no.ntnu.stud.larsjny.lab2.R;
+import no.ntnu.stud.larsjny.lab2.util.Callback;
+import no.ntnu.stud.larsjny.lab2.util.RssListAdapter;
 
 /**
  * Downloads the feed in a background thread
  */
-public class DownloadFeedTask extends AsyncTask<String, Integer, Long> {
+public class DownloadFeedTask extends AsyncTask<String, Boolean, ArrayList<Article>> {
 
-    private Activity activity;
 
-    private View progress;
+    private Callback callback;
+    private RssListAdapter listAdapter;
 
-    private ArrayList<Article> articles;
 
     private int limit;
 
-    public DownloadFeedTask(Activity activity, int limit){
+    public DownloadFeedTask(Callback callback, RssListAdapter listAdapter, int limit){
         super();
-        this.activity = activity;
-        this.articles = new ArrayList<>();
+        this.callback = callback;
+        this.listAdapter = listAdapter;
         this.limit = limit;
+
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-        this.progress = this.activity.findViewById(R.id.progressView);
-        this.progress.setVisibility(View.VISIBLE);
-    }
 
     @Override
-    protected Long doInBackground(String... urls) {
+    protected ArrayList<Article> doInBackground(String... urls) {
 
-        if (urls.length <= 0)    // No URLs set. Quit
-            return 0L;
+        if (urls.length <= 0) {    // No URLs set. Quit
+            publishProgress(true);
+            return null;
+        }
+
+        ArrayList<Article> articles = new ArrayList<>();
 
         try {
-
-            Log.d(this.activity.getString(R.string.LogTag), "Fetching URLS: " + Arrays.toString(urls));
 
             SyndFeed feed = getFeed(urls[0]);
 
@@ -86,33 +77,30 @@ public class DownloadFeedTask extends AsyncTask<String, Integer, Long> {
                 String summary = entries.get(i).getDescription().getValue();
                 String content = entries.get(i).getSource().getDescription();
 
-                this.articles.add(new Article(this.activity, imgUrl, title, summary, content, date, author));
+                articles.add(new Article(this.listAdapter, imgUrl, title, summary, content, date, author));
             }
 
-        } catch (FeedException e) {
-            Log.d(this.activity.getString(R.string.LogTag), "Invalid Feed: " + e.getMessage());
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.d(this.activity.getString(R.string.LogTag), "Unable to read URL: " + e.getMessage());
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            Log.d(this.activity.getString(R.string.LogTag), "Invalid URL: " + e.getMessage());
+        } catch (FeedException | IOException | URISyntaxException e) {
             e.printStackTrace();
         }
 
-
-        return 1L;
+        publishProgress(true);
+        return articles;
     }
-
-
 
     @Override
-    protected void onPostExecute(Long aLong) {
-        ((ListActivity) this.activity).addArticles(this.articles);
-        this.progress.setVisibility(View.GONE);
+    protected void onProgressUpdate(Boolean... values) {
+        super.onProgressUpdate(values);
     }
 
+    @Override
+    protected void onPostExecute(ArrayList<Article> articles) {
+        super.onPostExecute(articles);
 
+        this.listAdapter.addAll(articles);
+        this.listAdapter.notifyDataSetChanged();
+        this.callback.doCallback();
+    }
 
     private SyndFeed getFeed(String url) throws IOException, URISyntaxException, FeedException{
         URL uri = new URL(url);
