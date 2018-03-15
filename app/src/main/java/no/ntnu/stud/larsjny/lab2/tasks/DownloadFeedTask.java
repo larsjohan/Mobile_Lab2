@@ -1,10 +1,12 @@
 package no.ntnu.stud.larsjny.lab2.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.rometools.rome.feed.synd.SyndEnclosure;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndLink;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
@@ -14,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -75,7 +78,9 @@ public class DownloadFeedTask extends AsyncTask<String, Boolean, ArrayList<Artic
                 Date date = entries.get(i).getPublishedDate();
                 String author = entries.get(i).getAuthor();
                 String summary = entries.get(i).getDescription().getValue();
-                String content = entries.get(i).getSource().getDescription();
+
+                String content  = entries.get(i).getUri();
+
 
                 articles.add(new Article(this.listAdapter, imgUrl, title, summary, content, date, author));
             }

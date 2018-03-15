@@ -14,12 +14,14 @@
     <string name="frequencySummary">How often the Feed should be updated</string>
 
     <string-array name="frequency">
+        <item>10 sec</item>
         <item>10 min</item>
         <item>60 min</item>
         <item>24 hours</item>
     </string-array>
 
     <string-array name="frequencyValues">
+        <item>10</item>
         <item>600</item>
         <item>3600</item>
         <item>86400</item>

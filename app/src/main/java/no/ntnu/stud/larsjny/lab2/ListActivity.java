@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +38,8 @@ public class ListActivity extends AppCompatActivity implements Callback {
     private String url;
     private int frequency;
     private int feedSize;
+
+    private ScheduledExecutorService scheduler;
 
 
     @Override
@@ -65,9 +68,7 @@ public class ListActivity extends AppCompatActivity implements Callback {
 
         Log.d(getString(R.string.LogTag), "Scheduling update every " + this.frequency + " seconds");
 
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-        scheduler.scheduleAtFixedRate(this::updateFeed, this.frequency, this.frequency, TimeUnit.SECONDS);
 
         updateFeed();
 
@@ -91,7 +92,8 @@ public class ListActivity extends AppCompatActivity implements Callback {
             displayContent.putExtra("title", selected.getTitle());
             displayContent.putExtra("date", selected.getDate());
             displayContent.putExtra("author", selected.getAuthor());
-            displayContent.putExtra("content", selected.getSummary());
+            displayContent.putExtra("summary", selected.getSummary());
+            displayContent.putExtra("content", selected.getContent());
 
             startActivityForResult(displayContent, 0);
         }else{
@@ -160,6 +162,12 @@ public class ListActivity extends AppCompatActivity implements Callback {
         this.url = pref.getString("rssurl", "");
         this.frequency = Integer.parseInt(pref.getString("frequency", getString(R.string.frequencyDefault)));
         this.feedSize = Integer.parseInt(pref.getString("feedSize", getString(R.string.itemsDefault)));
+
+        if(this.scheduler != null && !this.scheduler.isShutdown())
+            this.scheduler.shutdown();
+
+        this.scheduler = Executors.newSingleThreadScheduledExecutor();
+        this.scheduler.scheduleAtFixedRate(this::updateFeed, this.frequency, this.frequency, TimeUnit.SECONDS);
     }
 
     /**
