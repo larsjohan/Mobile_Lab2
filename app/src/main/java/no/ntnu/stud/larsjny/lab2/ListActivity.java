@@ -9,12 +9,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import no.ntnu.stud.larsjny.lab2.prefs.SettingsActivity;
 import no.ntnu.stud.larsjny.lab2.prefs.SettingsHandler;
 import no.ntnu.stud.larsjny.lab2.tasks.DownloadFeedTask;
+import no.ntnu.stud.larsjny.lab2.util.Article;
+import no.ntnu.stud.larsjny.lab2.util.RssListAdapter;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -43,33 +49,43 @@ public class ListActivity extends AppCompatActivity {
         this.adapter = new RssListAdapter(this,0, this.articles);
 
         this.list.setAdapter(this.adapter);
+
+        this.list.setOnItemClickListener(this::displayContent);
         updateFeed();
     }
 
-    /**
-     * Loads the newest articles from the specified RSS-URL
-     */
-    public void updateFeed(){
-        update();                           // Fetch parameters from Prefs
-        this.articles.clear();              // Clear the loaded articles
-        fetchSource();                      // Fetch the new feed and update list
-    }
+
+
 
     /**
      * Shows the selected article's content.
      */
-    public void displayContent(){
-        Intent displayContent = new Intent(this, ContentActivity.class);
+    public void displayContent(AdapterView<?> parent, View view, int position, long id){
 
-        list.getSelectedItem();
 
-        startActivity(displayContent);
+        Article selected = this.adapter.getItem(position);
+
+        if (selected != null) {
+            Intent displayContent = new Intent(this, ContentActivity.class);
+
+            //displayContent.putExtra("image", selected.getImage());
+            displayContent.putExtra("title", selected.getTitle());
+            displayContent.putExtra("date", selected.getDate());
+            displayContent.putExtra("author", selected.getAuthor());
+            displayContent.putExtra("content", selected.getSummary());
+
+            startActivityForResult(displayContent, 0);
+        }else{
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+        }
     }
 
+    /**
+     * Download a new feed and update list
+     */
     private void fetchSource() {
 
         String rssurl = PreferenceManager.getDefaultSharedPreferences(this).getString("rssurl", "");
-
 
         DownloadFeedTask downloader = new DownloadFeedTask(this, this.feedSize);
 
@@ -126,14 +142,31 @@ public class ListActivity extends AppCompatActivity {
         this.feedSize = Integer.parseInt(pref.getString("feedSize", getString(R.string.itemsDefault)));
     }
 
+    /**
+     * Add articles to the list
+     * @param articles
+     */
     public void addArticles(ArrayList<Article> articles) {
         this.articles.clear();
         this.articles.addAll(articles);
         this.adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Get a hook to the adapter so that the list can be updated
+     * @return
+     */
     public RssListAdapter getAdapter() {
         return this.adapter;
+    }
+
+    /**
+     * Loads the newest articles from the specified RSS-URL
+     */
+    public void updateFeed(){
+        update();                           // Fetch parameters from Prefs
+        this.articles.clear();              // Clear the loaded articles
+        fetchSource();                      // Fetch the new feed and update list
     }
 
 }

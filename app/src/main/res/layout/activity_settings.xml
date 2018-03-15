@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="no.ntnu.stud.larsjny.lab2.SettingsActivity">
+    tools:context="no.ntnu.stud.larsjny.lab2.prefs.SettingsActivity">
 
 </android.support.constraint.ConstraintLayout>

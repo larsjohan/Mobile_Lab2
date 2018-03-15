@@ -1,4 +1,4 @@
-package no.ntnu.stud.larsjny.lab2;
+package no.ntnu.stud.larsjny.lab2.prefs;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

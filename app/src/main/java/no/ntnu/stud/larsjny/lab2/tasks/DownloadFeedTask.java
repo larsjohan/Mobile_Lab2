@@ -1,18 +1,10 @@
 package no.ntnu.stud.larsjny.lab2.tasks;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndEnclosure;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -21,15 +13,15 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
-import no.ntnu.stud.larsjny.lab2.Article;
+import no.ntnu.stud.larsjny.lab2.util.Article;
 import no.ntnu.stud.larsjny.lab2.ListActivity;
 import no.ntnu.stud.larsjny.lab2.R;
 
@@ -89,10 +81,12 @@ public class DownloadFeedTask extends AsyncTask<String, Integer, Long> {
 
                 String imgUrl = (null != image) ? image.getUrl() : null;
                 String title = entries.get(i).getTitle();
+                Date date = entries.get(i).getPublishedDate();
+                String author = entries.get(i).getAuthor();
                 String summary = entries.get(i).getDescription().getValue();
                 String content = entries.get(i).getSource().getDescription();
 
-                this.articles.add(new Article(this.activity, imgUrl, title, summary, content));
+                this.articles.add(new Article(this.activity, imgUrl, title, summary, content, date, author));
             }
 
         } catch (FeedException e) {

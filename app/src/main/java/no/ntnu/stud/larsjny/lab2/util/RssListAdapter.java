@@ -1,4 +1,4 @@
-package no.ntnu.stud.larsjny.lab2;
+package no.ntnu.stud.larsjny.lab2.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import no.ntnu.stud.larsjny.lab2.R;
 
 /**
  * Created by Lars Johan on 13.03.2018.

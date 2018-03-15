@@ -24,7 +24,7 @@
         <activity android:name=".ContentActivity"
             android:parentActivityName=".ListActivity"/>
 
-        <activity android:name=".SettingsActivity"
+        <activity android:name=".prefs.SettingsActivity"
             android:parentActivityName=".ListActivity"></activity>
 
     </application>
